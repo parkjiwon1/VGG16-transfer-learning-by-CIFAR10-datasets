@@ -7,41 +7,18 @@ import matplotlib.pyplot as plt
 
 (train_X,train_Y), (test_X,test_Y) = tf.keras.datasets.cifar10.load_data()
 
-train_X = tf.keras.applications.vgg16.preprocess_input(train_X)
-test_X = tf.keras.applications.vgg16.preprocess_input(test_X)
+idx = np.where((train_Y == 0)|(train_Y == 1)|(train_Y==8))
+idx2 = np.where((test_Y == 0)|(test_Y == 1)|(test_Y==8))
 
-train_x ,test_x = np.zeros((15000,32,32,3)),np.zeros((3000,32,32,3))
-train_y,test_y = np.zeros(15000,),np.zeros((3000,))
+train_x = train_X[idx[0],:]; test_x = test_X[idx2[0],:]
+train_y = train_Y[idx]; test_y = test_Y[idx2]
 
-k = 0
-for i in range(len(train_X)):
-    if (train_Y[i] == 0):
-        train_x[k] = train_X[i]
-        train_y[k] = 0
-        k += 1
-    elif (train_Y[i] == 1):
-        train_x[k] = train_X[i]
-        train_y[k] = 1
-        k += 1
-    elif (train_Y[i] == 8):
-        train_x[k] = train_X[i]
-        train_y[k] = 2
-        k += 1
+idx = np.where(train_y == 8); idx2 = np.where(test_y ==8)
+train_y[idx] = 2; test_y[idx2] = 2
 
-l = 0
-for i in range(len(test_X)):
-    if (test_Y[i] == 0):
-        test_x[l] = test_X[i]
-        test_y[l] = 0
-        l += 1
-    elif (test_Y[i] == 1):
-        test_x[l] = test_X[i]
-        test_y[l] = 1
-        l += 1
-    elif (test_Y[i] == 8):
-        test_x[l] = test_X[i]
-        test_y[l] = 2
-        l += 1
+train_x = tf.keras.applications.vgg16.preprocess_input(train_x)
+test_x = tf.keras.applications.vgg16.preprocess_input(test_x)
+
 
 model = tf.keras.applications.VGG16(include_top = False)
 model.summary()
